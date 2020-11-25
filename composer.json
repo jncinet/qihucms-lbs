@@ -1,0 +1,32 @@
+{
+    "name": "jncinet/qihucms-lbs",
+    "description": "qihucms lbs service.",
+    "keywords": [
+        "laravel",
+        "qihucms",
+        "lbs"
+    ],
+    "homepage": "https://www.qihucms.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zhangye",
+            "email": "y@qilephp.com"
+        }
+    ],
+    "require": {
+        "guzzlehttp/guzzle": "^6.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Qihucms\\Lbs\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Qihucms\\Lbs\\LbsServiceProvider"
+            ]
+        }
+    }
+}
