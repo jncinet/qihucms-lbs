@@ -9,8 +9,8 @@ Route::group([
     'middleware' => ['api'],
     'as' => 'api.'
 ], function (Router $router) {
-    $router->post('ip', 'LbsController@ip')->name('lbs.ip');
-    $router->post('gps', 'LbsController@gps')->name('lbs.gps');
+    $router->get('ip', 'LbsController@ip')->name('lbs.ip');
+    $router->get('gps', 'LbsController@gps')->name('lbs.gps');
 });
 
 // 后台

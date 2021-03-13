@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "guzzlehttp/guzzle": "^6.5"
+        "jncinet/laravel-env-editor": "^1.0"
     },
     "autoload": {
         "psr-4": {

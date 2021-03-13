@@ -4,7 +4,6 @@ namespace Qihucms\Lbs\Controllers\Admin;
 
 use Encore\Admin\Widgets\Form;
 use Illuminate\Http\Request;
-use Qihucms\EditEnv\EditEnv;
 
 class ConfigForm extends Form
 {
@@ -13,16 +12,30 @@ class ConfigForm extends Form
      *
      * @var string
      */
-    public $title = '地图设置';
+    public $title;
 
+    /**
+     * ConfigForm constructor.
+     * @param array $data
+     */
+    public function __construct($data = [])
+    {
+        parent::__construct($data);
+        $this->title = __('qihu_lbs::lbs.lbs_setting_h1');
+    }
+
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse|mixed
+     */
     public function handle(Request $request)
     {
         $data = $request->all();
 
-        if (app(EditEnv::class)->setEnv($data)) {
-            admin_success('更新成功');
+        if (app('env-editor')->setEnv($data)) {
+            admin_success(__('qh.update_success'));
         } else {
-            admin_error('更新失败');
+            admin_error(__('qh.update_failed'));
         }
         return back();
     }
@@ -32,10 +45,26 @@ class ConfigForm extends Form
      */
     public function form()
     {
-        $this->divider('腾讯地图');
+        $this->select('lbs', __('qihu_lbs::lbs.lbs_select'))
+            ->options([
+                'tencent' => __('qihu_lbs::lbs.tencent'),
+                'gaode' => __('qihu_lbs::lbs.gaode'),
+                'baidu' => __('qihu_lbs::lbs.baidu'),
+            ]);
+        $this->divider(__('qihu_lbs::lbs.tencent'));
         $this->text('tencent_lbs_key', 'Key')
-            ->help('获取地址：<a href="https://lbs.qq.com/dev/console/key/manage" target="_blank">https://lbs.qq.com/dev/console/key/manage</a>');
-        $this->text('tencent_lbs_sk', '签名');
+            ->help(__('qihu_lbs::lbs.tencent_help'));
+        $this->text('tencent_lbs_sk', __('qihu_lbs::lbs.sign'));
+
+        $this->divider(__('qihu_lbs::lbs.gaode'));
+        $this->text('amap_lbs_key', 'Key')
+            ->help(__('qihu_lbs::lbs.gaode_help'));
+        $this->text('amap_lbs_sk', __('qihu_lbs::lbs.sign'));
+
+        $this->divider(__('qihu_lbs::lbs.baidu'));
+        $this->text('baidu_lbs_key', 'Key')
+            ->help(__('qihu_lbs::lbs.baidu_help'));
+        $this->text('baidu_lbs_sk', __('qihu_lbs::lbs.sign'));
     }
 
     /**
@@ -43,10 +72,14 @@ class ConfigForm extends Form
      */
     public function data()
     {
-        $data = app(EditEnv::class)->getEnv();
         return [
-            'tencent_lbs_key' => $data['TENCENT_LBS_KEY'] ?? null,
-            'tencent_lbs_sk' => $data['TENCENT_LBS_SK'] ?? null,
+            'lbs' => config('qihu_lbs.default'),
+            'tencent_lbs_key' => config('qihu_lbs.tencent_key'),
+            'tencent_lbs_sk' => config('qihu_lbs.tencent_sk'),
+            'amap_lbs_key' => config('qihu_lbs.amap_key'),
+            'amap_lbs_sk' => config('qihu_lbs.amap_sk'),
+            'baidu_lbs_key' => config('qihu_lbs.baidu_key'),
+            'baidu_lbs_sk' => config('qihu_lbs.baidu_sk'),
         ];
     }
 }

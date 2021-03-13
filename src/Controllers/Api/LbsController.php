@@ -2,30 +2,27 @@
 
 namespace Qihucms\Lbs\Controllers\Api;
 
-use App\Http\Controllers\Api\ApiController;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Qihucms\Lbs\Tencent;
 
-class LbsController extends ApiController
+class LbsController extends Controller
 {
     /**
-     * @var Tencent
+     * @var \Illuminate\Contracts\Foundation\Application|mixed
      */
-    protected $tencent;
+    protected $app;
 
     /**
      * LbsController constructor.
-     * @param Tencent $tencent
      */
-    public function __construct(Tencent $tencent)
+    public function __construct()
     {
-        $this->tencent = $tencent;
+        $this->app = app('lbs.' . config('qihu_lbs.default'));
     }
 
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function ip(Request $request)
     {
@@ -35,7 +32,17 @@ class LbsController extends ApiController
             $ip = $request->ip();
         }
 
-        $result = $this->tencent->ipLocation($ip);
+        $result = $this->app->ipLocation($ip);
+
+        // 国外IP无法解析时，能过取到的经纬度再次解析
+        if ($result['result']['ad_info']['adcode'] < 1
+            && $result['result']['location']['lng'] !== 0
+            && $result['result']['location']['lat'] !== 0) {
+            $result = $this->app->gpsLocation(
+                $result['result']['location']['lat'],
+                $result['result']['location']['lng']
+            );
+        }
 
         return $this->jsonResponse($result);
     }
@@ -43,11 +50,13 @@ class LbsController extends ApiController
     /**
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function gps(Request $request)
     {
-        $result = $this->tencent->gpsLocation($request->input('lat', 0), $request->input('lng', 0));
+        $result = $this->app->gpsLocation(
+            $request->input('lat', 0),
+            $request->input('lng', 0)
+        );
 
         return $this->jsonResponse($result);
     }
