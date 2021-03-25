@@ -27,7 +27,7 @@ class LbsController extends Controller
     public function ip(Request $request)
     {
         $ip = $request->input('ip');
-
+return route('api.lbs.ip');
         if (empty($ip)) {
             $ip = $request->ip();
         }

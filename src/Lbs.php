@@ -2,9 +2,7 @@
 
 namespace Qihucms\Lbs;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
-use phpDocumentor\Reflection\Types\Self_;
 use Qihucms\Lbs\Contracts\GatewayInterface;
 use Qihucms\Lbs\Gateways\BaiDuGateway;
 use Qihucms\Lbs\Gateways\GaoDeGateway;
